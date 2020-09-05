@@ -1,0 +1,346 @@
+{
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "swagger": "2.0",
+  "info": {
+    "description": "The purpose of this application is to retrieve and store images",
+    "title": "This is swagger for Gallery",
+    "contact": {
+      "name": "Mohit Arora",
+      "email": "mohitarora19966@gmail.com"
+    },
+    "version": "1.0.0"
+  },
+  "basePath": "/api/v1",
+  "paths": {
+    "/albums": {
+      "get": {
+        "description": "Get Album List",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "Albums"
+        ],
+        "summary": "get Albums List",
+        "operationId": "getAlbums",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "to limit the result default is 10 and max could be 100",
+            "name": "limit",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "to skip items",
+            "name": "offset",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/AlbumResponse"
+            }
+          }
+        }
+      },
+      "post": {
+        "description": "Create a new album",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "Albums"
+        ],
+        "summary": "Create Album",
+        "operationId": "createAlbum",
+        "parameters": [
+          {
+            "description": "Album",
+            "name": "Album",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/Album"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Success, record created",
+            "schema": {
+              "$ref": "#/definitions/Album"
+            }
+          }
+        }
+      }
+    },
+    "/albums/{albumID}": {
+      "delete": {
+        "description": "Delete a existing album",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "Albums"
+        ],
+        "summary": "Delete Album",
+        "operationId": "deleteAlbum",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "albumID is needed to delete album",
+            "name": "albumID",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/albums/{albumID}/images": {
+      "get": {
+        "description": "Get Album Image List",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "Images"
+        ],
+        "summary": "get Albums Image List",
+        "operationId": "getAlbumsImages",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "albumID to list images from album",
+            "name": "albumID",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "description": "to limit the result default is 10 and max could be 100",
+            "name": "limit",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "to skip items",
+            "name": "offset",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/ImageResponse"
+            }
+          }
+        }
+      },
+      "post": {
+        "description": "Post a new Image",
+        "consumes": [
+          "multipart/form-data"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "Images"
+        ],
+        "summary": "Post Image",
+        "operationId": "postImage",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "Image to upload",
+            "name": "albumID",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "file",
+            "description": "Image to upload",
+            "name": "image",
+            "in": "formData",
+            "required": true
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Success, record created",
+            "schema": {
+              "$ref": "#/definitions/Album"
+            }
+          }
+        }
+      }
+    },
+    "/albums/{albumID}/images/{imageID}": {
+      "delete": {
+        "description": "Delete a existing image",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "Images"
+        ],
+        "summary": "Delete Image",
+        "operationId": "deleteImage",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "albumID is needed to delete image",
+            "name": "albumID",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "description": "imageID is needed to delete image",
+            "name": "imageID",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "Album": {
+      "description": "Album is to store album metadata",
+      "type": "object",
+      "properties": {
+        "id": {
+          "$ref": "#/definitions/ObjectID"
+        },
+        "name": {
+          "type": "string",
+          "x-go-name": "Name"
+        }
+      },
+      "x-go-package": "github.com/MohitArora1/gallery/models"
+    },
+    "AlbumResponse": {
+      "description": "AlbumResponse to return images response",
+      "type": "object",
+      "properties": {
+        "albums": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Album"
+          },
+          "x-go-name": "Albums"
+        },
+        "pagination": {
+          "$ref": "#/definitions/Pagination"
+        }
+      },
+      "x-go-package": "github.com/MohitArora1/gallery/models"
+    },
+    "Image": {
+      "description": "Image is to store image metadata",
+      "type": "object",
+      "properties": {
+        "album_id": {
+          "type": "string",
+          "x-go-name": "AlbumID"
+        },
+        "id": {
+          "$ref": "#/definitions/ObjectID"
+        },
+        "url": {
+          "type": "string",
+          "x-go-name": "URL"
+        }
+      },
+      "x-go-package": "github.com/MohitArora1/gallery/models"
+    },
+    "ImageResponse": {
+      "description": "ImageResponse to return images response",
+      "type": "object",
+      "properties": {
+        "images": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Image"
+          },
+          "x-go-name": "Images"
+        },
+        "pagination": {
+          "$ref": "#/definitions/Pagination"
+        }
+      },
+      "x-go-package": "github.com/MohitArora1/gallery/models"
+    },
+    "ObjectID": {
+      "type": "array",
+      "title": "ObjectID is the BSON ObjectID type.",
+      "items": {
+        "type": "integer",
+        "format": "uint8"
+      },
+      "x-go-package": "go.mongodb.org/mongo-driver/bson/primitive"
+    },
+    "Pagination": {
+      "type": "object",
+      "title": "Pagination ...",
+      "properties": {
+        "count": {
+          "type": "integer",
+          "format": "int64",
+          "x-go-name": "Count"
+        },
+        "limit": {
+          "type": "integer",
+          "format": "int64",
+          "x-go-name": "Limit"
+        },
+        "offset": {
+          "type": "integer",
+          "format": "int64",
+          "x-go-name": "Offset"
+        },
+        "total": {
+          "type": "integer",
+          "format": "int64",
+          "x-go-name": "Total"
+        }
+      },
+      "x-go-package": "github.com/MohitArora1/gallery/models"
+    }
+  }
+}
