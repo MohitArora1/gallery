@@ -16,6 +16,7 @@ import (
 type config struct {
 	DatabaseName string `mapstructure:"database_name"`
 	DatabaseURL  string `mapstructure:"database_url"`
+	KafkaURL     string `mapstructure:"kafka_url"`
 	Storage      string `mapstructure:"storage"`
 }
 

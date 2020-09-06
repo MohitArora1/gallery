@@ -1,5 +1,6 @@
 {
     "database_name":"gallery",
     "database_url":"mongodb://localhost:27017",
+    "kafka_url":"localhost:9092",
     "storage":"/data"
 }

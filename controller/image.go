@@ -13,6 +13,8 @@ import (
 	"github.com/MohitArora1/gallery/models"
 	"github.com/MohitArora1/gallery/utils"
 	"github.com/gorilla/mux"
+
+	"github.com/confluentinc/confluent-kafka-go/kafka"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
@@ -88,11 +90,13 @@ func imagePostHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	vars := mux.Vars(r)
+	url := "http://" + r.Host + "/data/" + id.Hex() + ext
+	fmt.Printf(url)
 	albumID := vars["albumID"]
 	image := models.Image{
 		ID:      id,
 		AlbumID: albumID,
-		URL:     id.Hex() + ext,
+		URL:     url,
 	}
 	insertRecord, err := database.Collection(utils.Image).InsertOne(context.Background(), &image)
 	if err != nil {
@@ -105,7 +109,28 @@ func imagePostHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	image.ID = insertRecord.InsertedID.(primitive.ObjectID)
+	produceMessage(image.URL)
 	utils.WriteJSON(w, image)
+
+}
+
+func produceMessage(msg string) {
+	topic := "myTopic"
+
+	p, err := kafka.NewProducer(&kafka.ConfigMap{"bootstrap.servers": utils.Config.KafkaURL})
+	if err != nil {
+		panic(err)
+	}
+
+	defer p.Close()
+
+	// Produce messages to topic (asynchronously)
+	for _, word := range []string{msg} {
+		p.Produce(&kafka.Message{
+			TopicPartition: kafka.TopicPartition{Topic: &topic, Partition: kafka.PartitionAny},
+			Value:          []byte(word),
+		}, nil)
+	}
 
 }
 
