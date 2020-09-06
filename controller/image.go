@@ -2,6 +2,7 @@ package controller
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"io/ioutil"
 	"log"
@@ -109,7 +110,8 @@ func imagePostHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	image.ID = insertRecord.InsertedID.(primitive.ObjectID)
-	produceMessage(image.URL)
+	msg, _ := json.Marshal(image)
+	produceMessage(string(msg))
 	utils.WriteJSON(w, image)
 
 }
@@ -119,7 +121,8 @@ func produceMessage(msg string) {
 
 	p, err := kafka.NewProducer(&kafka.ConfigMap{"bootstrap.servers": utils.Config.KafkaURL})
 	if err != nil {
-		panic(err)
+		log.Printf("Not able to connect with kafka")
+		return
 	}
 
 	defer p.Close()
