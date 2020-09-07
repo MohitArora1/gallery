@@ -17,3 +17,5 @@ open url in browser
 http://localhost:8080/swaggerui/
 
 ```
+
+![swagger](image.png)
